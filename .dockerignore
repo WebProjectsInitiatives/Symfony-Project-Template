@@ -1,0 +1,15 @@
+*
+
+# All the file / directory that coulb be use by Docker
+!/devops-sources
+!/docker-sources
+!/environment-files
+!/src
+!/templates
+!/public
+!/config
+!/assets
+!/tests
+!/bin
+!/composer.*
+!/symfony.lock

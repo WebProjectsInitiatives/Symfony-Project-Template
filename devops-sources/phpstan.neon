@@ -1,0 +1,16 @@
+#############################################################################################################
+# symfony-project-template - Windows - PHP-Stan - Configuration file                                 #
+
+# @author: William Pinaud & Aurélien Tricard                                                  #
+#############################################################################################################
+
+parameters:
+    # Level 7 is the highest level to Mess Detector
+    level: 7
+    # All directory and file that we didn't need to analyse
+    excludes_analyse:
+        - %currentWorkingDirectory%/devops-sources/*
+        - %currentWorkingDirectory%/php-sources/*
+        - %currentWorkingDirectory%/jenkins-jobs/*
+        - %currentWorkingDirectory%/vendor/*
+        - %currentWorkingDirectory%/var/*

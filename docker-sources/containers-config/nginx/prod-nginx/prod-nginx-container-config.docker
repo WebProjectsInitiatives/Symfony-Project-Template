@@ -1,0 +1,31 @@
+############################################################################################
+# symfony-project-template - Docker - Nginx Production Container Configuration File #
+# @author: William Pinaud & Aurélien Tricard                                               #
+############################################################################################
+
+# From allow you to use an image from DockerHub
+# After the colon, you will find the version of the image
+# Use Debian Stretch-Slim image
+FROM nginx:1.17
+
+# Value used for the next step
+ENV     communFileDirectory         docker-sources/containers-config/
+ENV     nginxDirectory              $communFileDirectory/nginx/
+ENV     dockerFileDirectory         $nginxDirectory/prod-nginx/
+
+ENV     nginxContainerDirectory     /etc/nginx/
+
+# Adding custom sysadmin utilities
+RUN apt-get clean && apt-get update && apt-get install -y vim nano procps net-tools wget curl iputils-ping
+
+# Update shell variables and add some shortcuts for future in-container uses
+COPY $communFileDirectory/.bashrc /root/.bashrc
+
+# Use a custom configuration file for frontend.
+COPY $dockerFileDirectory/prod.symfony-project-template.yourdomain.local.conf $nginxContainerDirectory/conf.d/prod.symfony-project-template.yourdomain.local.conf
+
+# Use a custom configuration subconf included file.
+COPY $nginxDirectory/fastcgi-params $nginxContainerDirectory/prod-fastcgi-params
+
+# Remove the NGINX default configuration files
+RUN rm -rf $nginxContainerDirectory/conf.d/default.conf /var/www/ $nginxContainerDirectory/fastcgi_params

@@ -1,0 +1,33 @@
+# A directory create by PhpStorm
+.idea/
+
+# Init project will automatically create them
+php-sources/php-win64
+devops-sources/vendor
+
+# Mess Detector report
+devops-sources/phpmd-report.xml
+
+###> symfony/framework-bundle ###
+/environment-files/.env.local
+/environment-files/.env.local.php
+/environment-files/.env.*.local
+/public/bundles/
+/var/
+/vendor/
+###< symfony/framework-bundle ###
+
+.php_cs.cache
+push.bat
+Attente.md
+
+###> phpunit/phpunit ###
+/phpunit.xml
+.phpunit.result.cache
+###< phpunit/phpunit ###
+
+###> symfony/phpunit-bridge ###
+.phpunit
+.phpunit.result.cache
+/phpunit.xml
+###< symfony/phpunit-bridge ###

@@ -1,0 +1,40 @@
+#####################################################################################
+# symfony-project-template - Docker - Dev MySQL Container Configuration File        #
+# @author: William Pinaud & Aurélien Tricard                                        #
+#####################################################################################
+
+# Using official image, this one does not rely on Ubuntu / Bionic (18.04 LTS)
+# This image uses debian:stretch-slim
+# Creating a custom container via docker compose does not work so far.
+FROM mysql:8.0.16
+
+# Value used for the next step
+ENV     communFileDirectory         docker-sources/containers-config/
+ENV     mysqlDirectory              $communFileDirectory/mysql/
+ENV     dockerFileDirectory         $mysqlDirectory/dev-mysql/
+
+# Update shell variables and add some shortcuts for future in-container uses
+COPY $communFileDirectory/.bashrc /root/.bashrc
+
+# Adding custom sysadmin utilities
+RUN apt-get update && apt-get install -y vim nano procps net-tools wget curl iputils-ping
+
+# Use a custom configuration file.
+# All containers use custom internal / external ports
+# dev containers use MySQL cache / optimization scripts
+COPY $dockerFileDirectory/dev-my.cnf /etc/mysql/my.cnf
+
+# Launch the default setup for MySQL initial parameters, so that it could run
+ADD $dockerFileDirectory/mysql-init-container.sql /docker-entrypoint-initdb.d
+
+# Finally, remove the files for security purposes
+RUN rm -Rf /docker-entrypoint-initdb.d
+
+# Also, erase the local environment variables for security reasons.
+RUN unset MYSQL_DATABASE \
+    && unset MYSQL_USER \
+    && unset MYSQL_PASSWORD \
+    && unset MYSQL_ROOT_USER \
+    && unset MYSQL_ROOT_PASSWORD \
+    && unset HOSTNAME \
+    && unset MYSQL_PORT

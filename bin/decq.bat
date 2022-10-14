@@ -1,0 +1,1 @@
+docker exec -it symfony-project-template-qa-php-cli bash

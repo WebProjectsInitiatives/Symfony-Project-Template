@@ -1,0 +1,7 @@
+####################################################################################
+# symfony-project-template - Docker - prod Container Configuration                 #
+# @author: William Pinaud & Aurélien Tricard                                       #
+####################################################################################
+
+# Docker-compose language version
+version: '3.8'

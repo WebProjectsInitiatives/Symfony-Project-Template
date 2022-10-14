@@ -1,0 +1,17 @@
+#!/bin/sh
+
+#############################################################################################################
+# Project Template Symphony - Windows - Git Hooks - Launch an analyse of PHP-Stan                           #
+
+# @author: William Pinaud & Aurélien Tricard                                                  #
+#############################################################################################################
+
+# Carefull! Change this file only if you really need to do it.
+# Check the directory git-hooks-sources if you need to modified git hooks
+echo ""
+echo ---------------------------------------------------
+echo Launch of PHP-Stan Analyse
+echo ---------------------------------------------------
+
+# Redirection of the script to git-hooks-sources/pre-push.bat at the source of the project
+sh git-hooks-sources/pre-push.sh

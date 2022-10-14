@@ -1,0 +1,242 @@
+####################################################################################
+# symfony-project-template - Docker - Dev Container Configuration                  #
+# @author: William Pinaud & Aurélien Tricard                                       #
+####################################################################################
+
+# Docker-compose language version
+version: '3.8'
+
+# Docker networking configuration
+networks:
+
+    # Defining the virtual network used by docker internally
+    symfony-project-template_dev_network:
+        ipam:
+            driver: default
+
+            # 10.2.0.0 > 10.2.255.255
+            # Network IPs structure is the following:
+            # 10 . [environment] . [technology] . [instance]
+            config:
+                -   subnet: 10.2.0.0/16
+
+#
+#volumes:
+#    dev-symfony-project-template-postgresql:
+#        external: true
+
+# Containers services definition
+services:
+
+    #########################################################################
+    # Postgre Container Configuration                                       #
+    #########################################################################
+    postgre:
+
+        # Image Generation
+        build:
+            context: "../"
+            dockerfile: "./docker-sources/containers-config/postgre/dev-postgre/dev-postgre-container-config.docker"
+
+        # Generated Image naming
+        # Set the image name here
+        image: symfony-project-template-dev-postgre
+
+        # The inner container name for docker console commands
+        container_name: symfony-project-template-dev-postgre
+
+        # Custom container port : Postgre application port
+        # Keep this exposed locally
+        ports:
+            - "10421:5432"
+
+        # ENV file utilisation
+        # This file is to complete for each environment by the developer
+        env_file:
+            - "../environment-files/.env"
+            - "../environment-files/.env.dev.local"
+
+        # Share the database volume from the container with our local directory to have a persistent volume
+        volumes:
+            - ../../docker-sources/postgre:/var/lib/postgresql/data
+
+        # Give a static IP address to this container
+        # From the network named "network"
+        networks:
+            symfony-project-template_dev_network:
+
+#    #########################################################################
+#    # MySQL Container Configuration                                         #
+#    #########################################################################
+#    mysql:
+#
+#        # Image Generation
+#        build:
+#            context: "../"
+#            dockerfile: "docker-sources/containers-config/mysql/dev-mysql/dev-mysql-container-config.docker"
+#
+#        # Generated Image naming
+#        # Set the image name here
+#        image: symfony-project-template-dev-mysql
+#
+#        # The inner container name for docker console commands
+#        container_name: symfony-project-template-dev-mysql
+#
+#        # Custom container port : MySQL application port
+#        # Keep this exposed locally
+#        ports:
+#            - "10321:10321"
+#
+#        # ENV file utilisation
+#        # This file is to complete for each environment by the developer
+#        env_file:
+#            - "../environment-files/.env"
+#            - "../environment-files/.env.dev.local"
+#
+#        # Share the database volume from the container with our local directory to have a persistent volume
+#        volumes:
+#            - ../../docker-volumes-sources/symfony-project-template-dev/database-MySQL:/var/lib/mysql
+#
+#        # Give a static IP address to this container
+#        # From the network named "network"
+#        networks:
+#            symfony-project-template_dev_network:
+#
+#    #########################################################################
+#    # NginX Container Configuration                                         #
+#    #########################################################################
+#    nginx:
+#
+#        # Image Generation
+#        build:
+#            context: "../"
+#            dockerfile: "docker-sources/containers-config/nginx/dev-nginx/dev-nginx-container-config.docker"
+#
+#        # Generated Image Calling
+#        image: symfony-project-template-dev-nginx
+#
+#        # The inner container name for docker console commands
+#        container_name: symfony-project-template-dev-nginx
+#
+#        # Custom container port : NginX application port for FastCGI
+#        ports:
+#            - "10121:10121"
+#
+#        # Put this container in the network named "symfony-project-template_dev_network"
+#        networks:
+#            symfony-project-template_dev_network:
+#
+#        # Share any directory or file that you need into the container
+#        volumes:
+#
+#            # The public mount directories and the frontend controller pattern files.
+#            - ../public:/projects/symfony-project-template/public
+#
+#        depends_on:
+#            - php-fpm
+#
+#    #########################################################################
+#    # PHP-FPM Container Configuration                                       #
+#    #########################################################################
+#    php-fpm:
+#
+#        # Image Generation
+#        build:
+#            context: "../"
+#            dockerfile: "docker-sources/containers-config/php-fpm/dev-php-fpm/dev-php-fpm-container-config.docker"
+#
+#        # Generated Image Calling
+#        image: symfony-project-template-dev-php-fpm
+#
+#        # The inner container name for docker console commands
+#        container_name: symfony-project-template-dev-php-fpm
+#
+#        # Custom container port : PHP-FPM application port for FastCGI
+#        ports:
+#            - "10221:10221"
+#
+#        # Share the backend subdirs volumes with PHP-CLI so that it can access it.
+#        # Careful though, we only share the ones that are non-local.
+#        # The rest is generated locally, or copied.
+#        # NOTE: please add as a TODO any subsequent supplementary subdirectories that are needed here.
+#        volumes:
+#            # Then, the ENV files containing app-global-but-subject-to-change and local, sensitive key/values.
+#            - ../environment-files:/projects/symfony-project-template/environment-files
+#            # The application configuration: routes, bundles, non-sensitive params, etc.
+#            - ../config:/projects/symfony-project-template/config
+#            # The public mount directories and the frontend controller pattern files.
+#            - ../public:/projects/symfony-project-template/public
+#            # The application-specific sources
+#            - ../src:/projects/symfony-project-template/src
+#            # And the templates associated with them
+#            - ../templates:/projects/symfony-project-template/templates
+#            # File and Directory to generate the front
+#            - ../assets:/projects/symfony-project-template/assets
+#            # Files and Directory require to install the vendor
+#            - ../bin:/projects/symfony-project-template/bin
+#
+#            - ../composer.phar:/projects/symfony-project-template/composer.phar
+#            - ../composer.json:/projects/symfony-project-template/composer.json
+#            - ../composer.lock:/projects/symfony-project-template/composer.lock
+#            - ../symfony.lock:/projects/symfony-project-template/symfony.lock
+#
+#        # Put this container in the network named "symfony-project-template_dev_network"
+#        networks:
+#            symfony-project-template_dev_network:
+#
+#        depends_on:
+#            - mysql
+#            - postgre
+#
+#    #########################################################################
+#    # PHP-CLI Container Configuration                                       #
+#    #########################################################################
+#    php-cli:
+#
+#        # Image Generation
+#        build:
+#            context: "../"
+#            dockerfile: "docker-sources/containers-config/php-cli/dev-php-cli/dev-php-cli-container-config.docker"
+#
+#        # Generated Image Calling
+#        image: symfony-project-template-dev-php-cli
+#
+#        # The inner container name for docker console commands
+#        container_name: symfony-project-template-dev-php-cli
+#
+#        # Share the backend subdirs volumes with PHP-CLI so that it can access it.
+#        # Careful though, we only share the ones that are non-local.
+#        # The rest is generated locally, or copied.
+#        # NOTE: please add as a TODO any subsequent supplementary subdirectories that are needed here.
+#        volumes:
+#            # All the file require to launch the different script
+#            - ../devops-sources:/projects/symfony-project-template/devops-sources
+#            # Then, the ENV files containing app-global-but-subject-to-change and local, sensitive key/values.
+#            - ../environment-files:/projects/symfony-project-template/environment-files
+#            # The application configuration: routes, bundles, non-sensitive params, etc.
+#            - ../config:/projects/symfony-project-template/config
+#            # The public mount directories and the frontend controller pattern files.
+#            - ../public:/projects/symfony-project-template/public
+#            # The application-specific sources
+#            - ../src:/projects/symfony-project-template/src
+#            # And the templates associated with them
+#            - ../templates:/projects/symfony-project-template/templates
+#            # File and Directory to generate the front
+#            - ../assets:/projects/symfony-project-template/assets
+#            # Different tests for the project
+#            - ../tests:/projects/symfony-project-template/tests
+#            # File and Directory require to install the vendor
+#            - ../bin:/projects/symfony-project-template/bin
+#
+#            - ../composer.phar:/projects/symfony-project-template/composer.phar
+#            - ../composer.json:/projects/symfony-project-template/composer.json
+#            - ../composer.lock:/projects/symfony-project-template/composer.lock
+#            - ../symfony.lock:/projects/symfony-project-template/symfony.lock
+#
+#        # Put this container in the network named "symfony-project-template_dev_network"
+#        networks:
+#            symfony-project-template_dev_network:
+#
+#        depends_on:
+#            - mysql
+#            - postgre

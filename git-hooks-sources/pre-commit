@@ -1,0 +1,17 @@
+#!/bin/sh
+
+#############################################################################################################
+# Project Template Symphony - Windows - Git Hooks - Launch PHP-cs-fixer to fix code                         #
+
+# @author: William Pinaud & Aurélien Tricard                                                  #
+#############################################################################################################
+
+# Careful! Change this file only if you really need to do it.
+# Check the directory git-hooks-sources if you need to modified git hooks
+echo ""
+echo ---------------------------------------------------
+echo Starting PHP-CS-FIXER to fixes your code
+echo ---------------------------------------------------
+
+# Redirection of the script to git-hooks-sources/pre-commit.bat at the source of the project
+sh git-hooks-sources/pre-commit.sh

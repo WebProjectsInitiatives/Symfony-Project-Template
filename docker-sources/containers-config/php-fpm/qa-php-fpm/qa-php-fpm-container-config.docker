@@ -1,0 +1,62 @@
+################################################################################################
+# symfony-project-template - Docker - PHP-FPM Container Configuration                   #
+
+# @author: William Pinaud & Aurélien Tricard                                     #
+################################################################################################
+
+# Using official PHP-FPM image from docker hub
+# @Uses Debian Stretch
+FROM php:7.2-fpm
+
+# Value used for the next step
+# This value don't stay in the container
+ENV     communFileDirectory         docker-sources/containers-config/
+ENV     phpFpmDirectory             $communFileDirectory/php-fpm/
+ENV     dockerFileDirectory         $phpFpmDirectory/qa-php-fpm/
+
+ENV     etcContainerDirectory       /usr/local/etc/
+ENV     phpFpmContainerDirectory    $etcContainerDirectory/php-fpm.d/
+
+# Adding custom sysadmin utilities
+RUN apt-get clean && apt-get update && apt-get install -y vim nano procps net-tools wget curl iputils-ping zip unzip
+
+# Update shell variables and add some shortcuts for future in-container uses
+COPY $communFileDirectory/.bashrc /root/.bashrc
+
+# This php.ini has edits for web calls
+# @SEE qa-php-fpm.ini
+COPY $dockerFileDirectory/qa-php-fpm.ini $etcContainerDirectory/php/php.ini
+
+# This qa-php-fpm.conf has edits to change the logs
+# @SEE qa-php-fpm.conf
+COPY $dockerFileDirectory/qa-php-fpm.conf $etcContainerDirectory/php-fpm.conf
+
+RUN touch /usr/local/var/log/qa-php-fpm.log
+RUN chmod 777 /usr/local/var/log/qa-php-fpm.log && chown www-data:www-data /usr/local/var/log/qa-php-fpm.log
+
+# This qa-www.conf has edits to change the FastCGI listening port and the listening IP
+# @SEE qa-www.conf
+COPY $dockerFileDirectory/qa-www.conf $phpFpmContainerDirectory/www.conf
+
+# This qa-zz-docker.conf has edits to change the FastCGI listening port
+# @SEE qa-zz-docker.conf
+COPY $dockerFileDirectory/qa-zz-docker.conf $phpFpmContainerDirectory/zz-docker.conf
+
+# Set the main directory of the container to the project sources
+WORKDIR /projects/symfony-project-template/
+
+# Generation of Vendor
+COPY composer.phar composer.phar
+COPY composer.json composer.json
+COPY composer.lock composer.lock
+COPY symfony.lock symfony.lock
+
+COPY bin bin
+COPY config config
+COPY assets assets
+COPY environment-files environment-files
+COPY src src
+COPY public public
+COPY templates templates
+
+RUN php composer.phar self-update && php composer.phar update

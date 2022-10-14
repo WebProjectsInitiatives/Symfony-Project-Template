@@ -1,0 +1,1 @@
+docker exec -it symfony-project-template-prod-php-fpm bash

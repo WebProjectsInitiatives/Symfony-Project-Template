@@ -1,0 +1,25 @@
+#####################################################################################
+# symfony-project-template - Docker - Dev Postgre Container Configuration File #
+
+# @author: William Pinaud & Aurélien Tricard                                       #
+#####################################################################################
+
+# Using official image, this one does not rely on Ubuntu / Bionic (18.04 LTS)
+# This image uses debian:stretch-slim
+# Creating a custom container via docker compose does not work so far.
+FROM postgres:12
+
+# Value used for the next step
+ENV     communFileDirectory         docker-sources/containers-config/
+ENV     postgresqlDirectory         $communFileDirectory/postgre/
+ENV     dockerFileDirectory         $postgresqlDirectory/dev-postgre/
+
+# Update shell variables and add some shortcuts for future in-container uses
+COPY $communFileDirectory/.bashrc /root/.bashrc
+
+# Adding custom sysadmin utilities
+RUN apt-get update && apt-get install -y vim nano procps net-tools wget curl iputils-ping
+
+# COPY $dockerFileDirectory/postgresql.conf /var/lib/postgresql/data/postgresql.conf
+
+CMD tail -f /dev/null

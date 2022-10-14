@@ -1,0 +1,17 @@
+#!/bin/sh
+
+#############################################################################################################
+# Project Template Symphony - Windows - Git Hooks - Check the commit-msg syntax                             #
+
+# @author: William Pinaud & Aurélien Tricard                                                  #
+#############################################################################################################
+
+# Carefull! Change this file only if you really need to do it.
+# Check the directory git-hooks-sources if you need to modified git hooks
+echo ""
+echo ---------------------------------------------------
+echo Check the commit message syntax
+echo ---------------------------------------------------
+
+# Redirection of the script to git-hooks-sources/commit-msg.bat at the source of the project
+sh git-hooks-sources/commit-msg.sh "$1"

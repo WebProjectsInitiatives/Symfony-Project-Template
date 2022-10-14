@@ -1,0 +1,59 @@
+################################################################################################
+# symfony-project-template - Docker - PHP-CLI Container Configuration                   #
+
+# @author: William Pinaud & Aurélien Tricard                                     #
+################################################################################################
+
+# Using official PHP-CLI image from docker hub
+# @Uses Debian Stretch
+FROM php:7.2-cli
+
+# Value used for the next step
+# This value don't stay in the container
+ENV     communFileDirectory         docker-sources/containers-config/
+ENV     phpFpmDirectory             $communFileDirectory/php-cli/
+ENV     dockerFileDirectory         $phpFpmDirectory/prod-php-cli/
+
+ENV     etcContainerDirectory       /usr/local/etc/
+ENV     binContainerDirectory       /usr/local/bin/
+
+# Adding custom sysadmin utilities
+RUN apt-get update && apt-get install -y vim nano procps net-tools wget curl iputils-ping
+
+# Adding custom utilities for PHP-CLI containers
+RUN apt-get install -y git zlib1g-dev libzip-dev unzip
+
+# Update shell variables and add some shortcuts for future in-container uses
+COPY $communFileDirectory/.bashrc /root/.bashrc
+
+# This php.ini has edits for batch processing and lesser time/memory limits
+# @SEE prod-php-cli.ini
+COPY $dockerFileDirectory/prod-php-cli.ini $etcContainerDirectory/php/php.ini
+
+# Install the additional PHP extensions required by the backend
+# These extensions are installed via a special script provided by the docker hub image
+RUN $binContainerDirectory/docker-php-ext-install "pdo_mysql"
+RUN $binContainerDirectory/docker-php-ext-install "zip"
+
+# Set the main directory of the container to the project sources
+WORKDIR /projects/symfony-project-template/
+
+# Generation of Vendor
+COPY composer.phar composer.phar
+COPY composer.json composer.json
+COPY composer.lock composer.lock
+COPY symfony.lock symfony.lock
+
+COPY bin bin
+COPY assets assets
+COPY tests tests
+COPY config config
+COPY environment-files environment-files
+COPY src src
+COPY public public
+COPY templates templates
+
+RUN php composer.phar self-update && php composer.phar update
+
+# An command that keeps the container alive
+CMD tail -f /dev/null
